@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class NutritionDetailsSheet extends StatelessWidget {
   final File imageFile;
@@ -12,6 +13,19 @@ class NutritionDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nutrition = nutritionData['nutrition'] ?? {};
+    final nutrients = nutrition['nutrients'] as List<dynamic>? ?? [];
+
+    // Helper function to find nutrient value
+    double getNutrientValue(String name) {
+      return nutrients
+          .firstWhere(
+            (n) => n['name'] == name,
+            orElse: () => {'amount': 0.0},
+          )['amount']
+          .toDouble();
+    }
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -58,18 +72,10 @@ class NutritionDetailsSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              nutritionData['title'] ?? 'Food Item',
+                              nutritionData['category'] ?? 'Food Item',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              nutritionData['category'] ?? 'Category',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey.shade600,
                               ),
                             ),
                           ],
@@ -95,23 +101,25 @@ class NutritionDetailsSheet extends StatelessWidget {
                     children: [
                       _NutritionTile(
                         label: 'Calories',
-                        value: '${nutritionData['calories']['value']}',
-                        unit: nutritionData['calories']['unit'],
+                        value: getNutrientValue('Calories').toStringAsFixed(0),
+                        unit: 'kcal',
                       ),
                       _NutritionTile(
                         label: 'Protein',
-                        value: '${nutritionData['protein']['value']}',
-                        unit: nutritionData['protein']['unit'],
+                        value: getNutrientValue('Protein').toStringAsFixed(1),
+                        unit: 'g',
                       ),
                       _NutritionTile(
                         label: 'Carbs',
-                        value: '${nutritionData['carbs']['value']}',
-                        unit: nutritionData['carbs']['unit'],
+                        value: getNutrientValue(
+                          'Carbohydrates',
+                        ).toStringAsFixed(1),
+                        unit: 'g',
                       ),
                       _NutritionTile(
                         label: 'Fat',
-                        value: '${nutritionData['fat']['value']}',
-                        unit: nutritionData['fat']['unit'],
+                        value: getNutrientValue('Fat').toStringAsFixed(1),
+                        unit: 'g',
                       ),
                     ],
                   ),

@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         Uri.parse('https://api.spoonacular.com/food/images/analyze'),
       );
 
-      request.headers['x-api-key'] = 'YOUR_SPOONACULAR_API_KEY';
+      request.headers['x-api-key'] = '76e0da654a3448439fa4c1581f55a1e5';
       request.files.add(
         await http.MultipartFile.fromPath('file', _imageFile!.path),
       );
@@ -79,7 +79,6 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
         if (data['nutrition'] != null) {
           // Show bottom sheet with nutrition details
           if (!mounted) return;
@@ -95,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                   builder:
                       (context, scrollController) => NutritionDetailsSheet(
                         imageFile: _imageFile!,
-                        nutritionData: data['nutrition'],
+                        nutritionData: data,
                       ),
                 ),
           );
