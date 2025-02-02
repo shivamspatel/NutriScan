@@ -79,6 +79,9 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('\n🔥 API RESPONSE START 🔥');
+        print(json.encode(data));
+        print('🔥 API RESPONSE END 🔥\n');
         if (data['nutrition'] != null) {
           // Show bottom sheet with nutrition details
           if (!mounted) return;

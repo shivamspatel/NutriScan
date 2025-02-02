@@ -13,18 +13,30 @@ class NutritionDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nutrition = nutritionData['nutrition'] ?? {};
-    final nutrients = nutrition['nutrients'] as List<dynamic>? ?? [];
+    final nutrition = nutritionData['nutrition'];
 
-    // Helper function to find nutrient value
-    double getNutrientValue(String name) {
-      return nutrients
-          .firstWhere(
-            (n) => n['name'] == name,
-            orElse: () => {'amount': 0.0},
-          )['amount']
-          .toDouble();
+    // Safely handle null nutrition data
+    if (nutrition == null) {
+      return const Center(child: Text('No nutrition data available'));
     }
+
+    // Debug print
+    print('All nutrients:');
+    final nutrients = nutrition['nutrients'];
+    if (nutrients is List) {
+      for (var n in nutrients) {
+        print('🔍 NUTRIENT: ${n['name']}: ${n['amount']} ${n['unit']}');
+      }
+    }
+
+    // Get values directly from nutrition object
+    double getCalories() =>
+        (nutrition['calories']['value'] as num?)?.toDouble() ?? 0.0;
+    double getProtein() =>
+        (nutrition['protein']['value'] as num?)?.toDouble() ?? 0.0;
+    double getCarbs() =>
+        (nutrition['carbs']['value'] as num?)?.toDouble() ?? 0.0;
+    double getFat() => (nutrition['fat']['value'] as num?)?.toDouble() ?? 0.0;
 
     return Container(
       decoration: const BoxDecoration(
@@ -72,7 +84,7 @@ class NutritionDetailsSheet extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              nutritionData['category'] ?? 'Food Item',
+                              nutritionData['category']['name'] ?? 'Food Item',
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -101,24 +113,22 @@ class NutritionDetailsSheet extends StatelessWidget {
                     children: [
                       _NutritionTile(
                         label: 'Calories',
-                        value: getNutrientValue('Calories').toStringAsFixed(0),
+                        value: getCalories().toStringAsFixed(0),
                         unit: 'kcal',
                       ),
                       _NutritionTile(
                         label: 'Protein',
-                        value: getNutrientValue('Protein').toStringAsFixed(1),
+                        value: getProtein().toStringAsFixed(1),
                         unit: 'g',
                       ),
                       _NutritionTile(
                         label: 'Carbs',
-                        value: getNutrientValue(
-                          'Carbohydrates',
-                        ).toStringAsFixed(1),
+                        value: getCarbs().toStringAsFixed(1),
                         unit: 'g',
                       ),
                       _NutritionTile(
                         label: 'Fat',
-                        value: getNutrientValue('Fat').toStringAsFixed(1),
+                        value: getFat().toStringAsFixed(1),
                         unit: 'g',
                       ),
                     ],
